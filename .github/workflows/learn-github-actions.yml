@@ -23,7 +23,7 @@ jobs:
           echo ${last_release_branch}
       - name: echo last_release
         run: |
-          release_br=${{ steps.check_backport.outputs.last_release }}
+          release_br=${{ steps.last_release.outputs.last_release }}
           echo "${release_br}"
           release_version=${release_br#*release\/}
           echo "${release_version}"
