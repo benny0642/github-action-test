@@ -1,0 +1,12 @@
+on:
+  pull_request:
+    branches:
+      - master
+    type: [opened, reopened]
+jobs:
+  test-github-context:
+    runs-on: ubuntu-latest
+    steps:
+      - echo github ref: {{github.ref}}
+      - echo github head_ref: {{github.head_ref}}
+    
