@@ -22,4 +22,12 @@ jobs:
           echo '::set-output name=last_release::'${last_release_branch}
           echo ${last_release_branch}
       - name: echo last_release
-        run: echo "${{ steps.last_release.outputs.last_release }}"
+        run: |
+          release_br=${{ steps.check_backport.outputs.release_br }}
+          echo "${release_br}"
+          release_version=${release_br#*release\/}
+          echo "${release_version}"
+      # - name: back to last release
+      #   run: |
+      #     git checkout master
+      #     git checkout -b backport/to_${{ steps.last_release.outputs.last_release }}
