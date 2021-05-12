@@ -23,7 +23,7 @@ jobs:
           echo '::set-output name=last_release::'${last_release_branch}
           echo ${last_release_branch}
       - name: backport to last release branch
-        gid: create_backport_branch
+        id: create_backport_branch
         run: |
           release_br='${{ steps.last_release.outputs.last_release }}'
           echo ${release_br}
@@ -37,7 +37,7 @@ jobs:
       - name: Auto create PR if need backport
         uses: repo-sync/pull-request@v2
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          ggithub_token: ${{ secrets.GITHUB_TOKEN }}
           source_branch: ${{ steps.create_backport_branch.outputs.backport_branch }}
           pr_title: Backport/${{ steps.last_release.outputs.last_release }}
           pr_allow_empty: true
