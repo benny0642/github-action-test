@@ -14,7 +14,7 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: '12.x'
-      - last_release:
+      - name: last_release
         run: |
           last_release_branch=$(git branch -r --list 'origin/release/1.[1-9][0-9][0-9]*' | sort | tail -n1)
           echo ${last_release_branch}
