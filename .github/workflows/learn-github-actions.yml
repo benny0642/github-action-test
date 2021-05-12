@@ -11,13 +11,13 @@ jobs:
     steps:
       - run: echo 'it is merged pull request'
       - uses: actions/checkout@v2
+      - run: git remote update --prune
       - uses: actions/setup-node@v1
         with:
           node-version: '12.x'
       - name: last_release
         id: last_release
         run: |
-          git fetch origin release/1.3.0
           last_release_branch=$(git branch -r --list 'origin/release/1.[0-9]*' | sort | tail -n1)
           echo '::set-output name=last_release::'${last_release_branch}
       - name: echo last_release
