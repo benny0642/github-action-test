@@ -15,6 +15,9 @@ jobs:
         with:
           node-version: '12.x'
       - name: last_release
+        id: last_release
         run: |
           last_release_branch=$(git branch -r --list 'origin/release/1.[0-9]*' | sort | tail -n1)
-          echo ${{last_release_branch}}
+          ::set-output name=last_release::last_release_branch
+      - name: echo last_release
+        run: echo "${{ steps.last_release.outputs.last_release }}"
