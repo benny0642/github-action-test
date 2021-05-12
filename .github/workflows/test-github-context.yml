@@ -1,7 +1,11 @@
 on:
-  push:
+  # push:
+  #   branches:
+  #     - hotfix/**
+  pull_request:
     branches:
-      - hotfix/**
+      - master
+    types: [opened]
 jobs:
   test-github-context:
     runs-on: ubuntu-latest
