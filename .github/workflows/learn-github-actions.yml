@@ -11,3 +11,4 @@ jobs:
     steps:
       - run: echo 'it is merged pull request'
       - uses: actions/checkout@v2
+      - run: git status
