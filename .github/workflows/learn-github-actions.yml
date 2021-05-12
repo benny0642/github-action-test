@@ -19,16 +19,26 @@ jobs:
         id: last_release
         run: |
           last_release_branch=$(git branch -r --list 'origin/release/1.[0-9]*' | sort | tail -n1)
+          last_release_branch=${last_release_branch#*origin\/}
           echo '::set-output name=last_release::'${last_release_branch}
           echo ${last_release_branch}
-      - name: echo last_release
+      - name: backport to last release branch
+        id: create_backport_branch
         run: |
           release_br='${{ steps.last_release.outputs.last_release }}'
           echo ${release_br}
           release_version=${release_br#*release\/}
           backport_branch=backport/to_release_${release_version}
           echo ${backport_branch}
-      # - name: back to last release
-      #   run: |
-      #     git checkout master
-      #     git checkout -b backport/to_${{ steps.last_release.outputs.last_release }}
+          git checkout master
+          git checkout -b ${backport_branch}
+          git push origin ${backport_branch}
+          echo '::set-output name=backport_branch::'${backport_branch}
+      - name: Auto create PR if need backport
+        uses: repo-sync/pull-request@v2
+        with:
+          source_branch: ${{ steps.create_backport_branch.outputs.backport_branch }}
+          pr_title: Backport/${{ steps.last_release.outputs.last_release }}
+          pr_allow_empty: true
+          destination_branch: ${{ steps.last_release_branch.outputs.last_release }}
+          
