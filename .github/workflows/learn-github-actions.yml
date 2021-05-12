@@ -15,4 +15,9 @@ jobs:
     steps:
       - run: echo 'it is merged pull request'
       - uses: actions/checkout@v2
-      - run: git status
+      - name: Create Pull Request
+        id: cpr
+        uses: peter-evans/create-pull-request@v3
+        with:
+          branch: develop
+          title: 'backport master to develop'
