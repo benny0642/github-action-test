@@ -25,8 +25,8 @@ jobs:
         run: |
           release_br='${{ steps.last_release.outputs.last_release }}'
           echo ${release_br}
-          release_version=${release_br#*origin\/}
-          backport_branch=backport/to_${release_version}
+          release_version=${release_br#*release\/}
+          backport_branch=backport/to_release_${release_version}
           echo ${backport_branch}
       # - name: back to last release
       #   run: |
