@@ -1,12 +1,16 @@
 name: hotfix-backport-actions
 on:
-  pull_request:
+  # pull_request:
+  #   branches:
+  #     - master
+  #   types: [closed]
+  push:
     branches:
       - master
-    types: [closed]
+      - hotfix/.*
 jobs:
   check-merged-pull-request:
-    if: github.event.pull_request.merged == true
+    # if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
       - run: echo 'it is merged pull request'
