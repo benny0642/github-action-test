@@ -18,6 +18,6 @@ jobs:
         id: last_release
         run: |
           last_release_branch=$(git branch -r --list 'origin/release/1.[0-9]*' | sort | tail -n1)
-          ::set-output name=last_release::last_release_branch
+          echo '::set-output name=last_release::'${last_release_branch}
       - name: echo last_release
         run: echo "${{ steps.last_release.outputs.last_release }}"
