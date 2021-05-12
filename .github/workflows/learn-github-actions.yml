@@ -23,7 +23,7 @@ jobs:
           echo '::set-output name=last_release::'${last_release_branch}
           echo ${last_release_branch}
       - name: backport to last release branch
-        - id: create_backport_branch
+        id: create_backport_branch
         run: |
           release_br='${{ steps.last_release.outputs.last_release }}'
           echo ${release_br}
