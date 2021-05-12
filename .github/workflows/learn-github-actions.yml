@@ -24,9 +24,7 @@ jobs:
       - name: echo last_release
         run: |
           release_br=${{ steps.last_release.outputs.last_release }}
-          echo "${release_br}"
-          release_version=${release_br#*release\/}
-          echo "${release_version}"
+          echo ${release_br}
       # - name: back to last release
       #   run: |
       #     git checkout master
