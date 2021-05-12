@@ -15,9 +15,7 @@ jobs:
     steps:
       - run: echo 'it is merged pull request'
       - uses: actions/checkout@v2
-      - name: Create Pull Request
-        id: cpr
-        uses: peter-evans/create-pull-request@v3
+      - uses: actions/setup-node@v1
         with:
-          branch: develop
-          title: 'backport master to develop'
+          node-version: '12.x'
+      - run: node -v
