@@ -1,10 +1,17 @@
-name: learn-github-actions
-on: [push]
+name: hotfix-backport-actions
+on:
+  pull_request:
+    branches:
+      - master
+    types: [closed]
 jobs:
-  check-bats-version:
+  check-merged-pull-request:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
-      - run: npm install -g bats
-      - run: bats -v
+      - run: echo 'it is merged pull request'
+  check-not-merged-pull-request:
+    if: github.event.pull_request.merged != true
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo 'it i not merged pull request'
