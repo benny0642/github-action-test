@@ -37,6 +37,7 @@ jobs:
       - name: Auto create PR if need backport
         uses: repo-sync/pull-request@v2
         with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           source_branch: ${{ steps.create_backport_branch.outputs.backport_branch }}
           pr_title: Backport/${{ steps.last_release.outputs.last_release }}
           pr_allow_empty: true
