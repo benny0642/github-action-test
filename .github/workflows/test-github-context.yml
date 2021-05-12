@@ -1,12 +1,15 @@
 on:
+  # push:
+  #   branches:
+  #     - hotfix/**
   pull_request:
     branches:
       - master
-    type: [opened, reopened]
+    types: [opened]
 jobs:
   test-github-context:
     runs-on: ubuntu-latest
     steps:
-      run: echo github ref:: {{github.ref}}
-      run: echo github head_ref:: {{github.head_ref}}
+      - run: echo '${{github.ref}}'
+      - run: echo '${{github.head_ref}}'
     
