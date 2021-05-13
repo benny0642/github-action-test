@@ -5,11 +5,12 @@ on:
       - master
     types: [closed]
 jobs:
-  check-merged-pull-request:
-    if: github.event.pull_request.merged == true
+  backport-to-release:
+    if: >
+      github.event.pull_request.merged == true &&
+      startsWith(github.event.pull_request.head.ref, 'hotfix/')
     runs-on: ubuntu-latest
     steps:
-      - run: echo 'it is merged pull request'
       - uses: actions/checkout@v2
       - run: git remote update --prune
       - uses: actions/setup-node@v1
@@ -22,13 +23,10 @@ jobs:
           last_release_branch=${last_release_branch#*origin\/}
           git checkout ${last_release_branch}
           yarn set-version-output # version = 1.1.0
-      - name: create backport branch
-        id: backport_branch
+      - name: create backport to release branch 
+        id: backport_release_branch
         run: |
-          release_br='${{ steps.last_release_branch.outputs.version }}'
-          echo ${release_br} # release/1.1.0
-          release_version=${release_br#*release\/} # 1.1.0
-          backport_branch_name=backport/to_release_${release_version}
+          backport_branch_name=backport/to_release_${{ steps.last_release_branch.outputs.version }}
           echo ${backport_branch_name} # backport/to_release_1.1.0
           git checkout master
           git checkout -b ${backport_branch_name}
@@ -38,10 +36,22 @@ jobs:
         uses: repo-sync/pull-request@v2
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          source_branch: ${{ steps.backport_branch.outputs.name }} # backport/to_release_1.1.0
+          source_branch: ${{ steps.backport_release_branch.outputs.name }} # backport/to_release_1.1.0
           pr_title: Backport/to_release${{ steps.last_release_branch.outputs.version }} # Backport/to_release_1.1.0
           pr_allow_empty: true
           destination_branch: release/${{ steps.last_release_branch.outputs.version }} # release/1.1.0
+      
+  backport-to-develop:
+    if: >
+      github.event.pull_request.merged == true &&
+      startsWith(github.event.pull_request.head.ref, 'hotfix/')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: git remote update --prune
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'          
       - name: get develop version
         id: develop_branch
         run: |
@@ -63,5 +73,3 @@ jobs:
           pr_title: Backport/to_develop_${{ steps.develop_branch.outputs.version }} # Backport/to_develop_1.3.0-alpha.0
           pr_allow_empty: true
           destination_branch: develop
-
-              
