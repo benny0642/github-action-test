@@ -42,7 +42,7 @@ jobs:
           pr_title: Backport/${{ steps.last_release.outputs.last_release }}
           pr_allow_empty: true
           destination_branch: ${{ steps.last_release.outputs.last_release }}
-      - name: backport to develop
+      - name: create backport branch to develop
         id: create_backport_develop_branch
         run: |
           git checkout master
@@ -50,12 +50,17 @@ jobs:
           git checkout -b ${backport_branch}
           git push origin ${backport_branch}
           echo '::set-output name=backport_branch::'${backport_branch}
+      -name: get develop version
+        id: develop_version
+        run: |
+          git checkout develop
+          yarn set-version-output
       - name: Auto create PR if need backport to develop
         uses: repo-sync/pull-request@v2
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           source_branch: ${{ steps.create_backport_develop_branch.outputs.backport_branch }}
-          pr_title: Backport/to_develop
+          pr_title: Backport/to_develop_${{ steps.develop_version.outputs.version }}
           pr_allow_empty: true
           destination_branch: develop
 
