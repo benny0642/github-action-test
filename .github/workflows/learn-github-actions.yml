@@ -39,7 +39,7 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           source_branch: ${{ steps.backport_branch.outputs.name }} # backport/to_release_1.1.0
-          pr_title: Backport/${{ steps.backport_branch.outputs.name }} # Backport/to_release_1.1.0
+          pr_title: Backport/to_release${{ steps.last_release_branch.outputs.version }} # Backport/to_release_1.1.0
           pr_allow_empty: true
           destination_branch: release/${{ steps.last_release_branch.outputs.version }} # release/1.1.0
       - name: get develop version
