@@ -48,7 +48,7 @@ jobs:
           git checkout master
           backport_branch=backport/to_develop
           git checkout -b ${backport_branch}
-          git push origin backport_branch
+          git push origin ${backport_branch}
           echo '::set-output name=backport_branch::'${backport_branch}
       - name: Auto create PR if need backport to develop
         uses: repo-sync/pull-request@v2
