@@ -39,7 +39,8 @@ jobs:
           source_branch: ${{ steps.backport_release_branch.outputs.name }} # backport/to_release_1.1.0
           pr_title: Backport/to_release${{ steps.last_release_branch.outputs.version }} # Backport/to_release_1.1.0
           pr_body: |
-            It automatted backport PR after hotfix branch merged into master.
+            It automatted backport PR after hotfix branch (${{github.event.pull_request.head.ref}}) merged into master.
+            If package.json is conflicted at version, please resolve the version at ${{ steps.last_release_branch.outputs.version }}
           pr_allow_empty: true
           destination_branch: release/${{ steps.last_release_branch.outputs.version }} # release/1.1.0
       
@@ -75,5 +76,6 @@ jobs:
           pr_title: Backport/to_develop_${{ steps.develop_branch.outputs.version }} # Backport/to_develop_1.3.0-alpha.0
           pr_body: |
             It automatted backport PR after hotfix branch (${{github.event.pull_request.head.ref}}) merged into master.
+            If package.json is conflicted at version, please resolve the version at ${{ steps.develop_branch.outputs.version }}
           pr_allow_empty: true
           destination_branch: develop
