@@ -38,10 +38,10 @@ jobs:
         uses: repo-sync/pull-request@v2
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          source_branch: ${{ steps.backport_branch.outputs.name }}
-          pr_title: Backport/${{ steps.last_release_branch.outputs.version }}
+          source_branch: ${{ steps.backport_branch.outputs.name }} # backport/to_release_1.1.0
+          pr_title: Backport/${{ steps.backport_branch.outputs.name }} # Backport/to_release_1.1.0
           pr_allow_empty: true
-          destination_branch: ${{ steps.last_release_branch.outputs.version }}
+          destination_branch: release/${{ steps.last_release_branch.outputs.version }} # release/1.1.0
       - name: get develop version
         id: develop_branch
         run: |
@@ -51,16 +51,16 @@ jobs:
         id: create_backport_develop_branch
         run: |
           git checkout master
-          backport_branch=backport/to_develop_${{ steps.develop_branch.outputs.version}}
+          backport_branch=backport/to_develop_${{ steps.develop_branch.outputs.version}} # backport/to_develop_1.3.0-alpha.0
           git checkout -b ${backport_branch}
           git push origin ${backport_branch}
-          echo '::set-output name=backport_branch::'${backport_branch}
+          echo '::set-output name=backport_branch::'${backport_branch} # backport/to_develop_1.3.0-alpha.0
       - name: Auto create PR if need backport to develop
         uses: repo-sync/pull-request@v2
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          source_branch: ${{ steps.create_backport_develop_branch.outputs.backport_branch }}
-          pr_title: Backport/to_develop_${{ steps.develop_branch.outputs.version }}
+          source_branch: ${{ steps.create_backport_develop_branch.outputs.backport_branch }} # backport/to_develop_1.3.0-alpha.0
+          pr_title: Backport/to_develop_${{ steps.develop_branch.outputs.version }} # Backport/to_develop_1.3.0-alpha.0
           pr_allow_empty: true
           destination_branch: develop
 
