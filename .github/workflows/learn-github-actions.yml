@@ -15,52 +15,52 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: '12.x'
-      - name: last_release
-        id: last_release
+      - name: get last release branch version
+        id: last_release_branch
         run: |
           last_release_branch=$(git branch -r --list 'origin/release/1.[0-9]*' | sort | tail -n1)
           last_release_branch=${last_release_branch#*origin\/}
-          echo '::set-output name=last_release::'${last_release_branch}
-          echo ${last_release_branch}
-      - name: backport to last release branch
-        id: create_backport_branch
+          git checkout ${last_release_branch}
+          yarn set-version-output # version = 1.1.0
+      - name: create backport branch
+        id: backport_branch
         run: |
-          release_br='${{ steps.last_release.outputs.last_release }}'
-          echo ${release_br}
-          release_version=${release_br#*release\/}
-          backport_branch=backport/to_release_${release_version}
-          echo ${backport_branch}
+          release_br='${{ steps.last_release_branch.outputs.version }}'
+          echo ${release_br} # release/1.1.0
+          release_version=${release_br#*release\/} # 1.1.0
+          backport_branch_name=backport/to_release_${release_version}
+          echo ${backport_branch_name} # backport/to_release_1.1.0
           git checkout master
-          git checkout -b ${backport_branch}
-          git push origin ${backport_branch}
-          echo '::set-output name=backport_branch::'${backport_branch}
+          git checkout -b ${backport_branch_name}
+          git push origin ${backport_branch_name}
+          echo '::set-output name=name::'${backport_branch_name} # backport/to_release_1.1.0
       - name: Auto create PR if need backport to release
         uses: repo-sync/pull-request@v2
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          source_branch: ${{ steps.create_backport_branch.outputs.backport_branch }}
-          pr_title: Backport/${{ steps.last_release.outputs.last_release }}
+          source_branch: ${{ steps.backport_branch.outputs.name }}
+          pr_title: Backport/${{ steps.last_release_branch.outputs.version }}
           pr_allow_empty: true
-          destination_branch: ${{ steps.last_release.outputs.last_release }}
+          destination_branch: ${{ steps.last_release_branch.outputs.version }}
+      - name: get develop version
+        id: develop_branch
+        run: |
+          git checkout develop
+          yarn set-version-output
       - name: create backport branch to develop
         id: create_backport_develop_branch
         run: |
           git checkout master
-          backport_branch=backport/to_develop
+          backport_branch=backport/to_develop_${{ steps.develop_branch.outputs.version}}
           git checkout -b ${backport_branch}
           git push origin ${backport_branch}
           echo '::set-output name=backport_branch::'${backport_branch}
-      - name: get develop version
-        id: develop_version
-        run: |
-          git checkout develop
-          yarn set-version-output
       - name: Auto create PR if need backport to develop
         uses: repo-sync/pull-request@v2
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           source_branch: ${{ steps.create_backport_develop_branch.outputs.backport_branch }}
-          pr_title: Backport/to_develop_${{ steps.develop_version.outputs.version }}
+          pr_title: Backport/to_develop_${{ steps.develop_branch.outputs.version }}
           pr_allow_empty: true
           destination_branch: develop
 
