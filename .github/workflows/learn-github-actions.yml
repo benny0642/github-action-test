@@ -50,7 +50,7 @@ jobs:
           git checkout -b ${backport_branch}
           git push origin ${backport_branch}
           echo '::set-output name=backport_branch::'${backport_branch}
-      -name: get develop version
+      - name: get develop version
         id: develop_version
         run: |
           git checkout develop
